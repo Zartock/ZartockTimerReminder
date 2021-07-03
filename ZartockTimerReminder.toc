@@ -1,0 +1,13 @@
+## Interface: 90100
+## Title: Zartock Timer Reminder
+## Author: My name
+## Version: 1
+
+# Libs
+Libs\lib_list.xml
+
+
+init.lua
+gui_renderer.lua
+gui_init.lua
+ZartockTimerReminder.lua
