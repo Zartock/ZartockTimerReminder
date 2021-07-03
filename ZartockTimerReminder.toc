@@ -1,7 +1,7 @@
 ## Interface: 90100
 ## Title: Zartock Timer Reminder
 ## Author: My name
-## Version: 1
+## Version: 0.1
 
 # Libs
 Libs\lib_list.xml
