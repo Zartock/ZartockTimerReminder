@@ -1,19 +1,19 @@
 local timers =
 {
     {"01:00", "03:00", "05:00", "07:00", "09:00", "11:00", "13:00", "15:00", "17:00", "19:00", "21:00", "23:00"},
-    --{"01:00", "03:00", "05:00", "07:00", "09:00", "11:00", "13:00", "15:00", "17:00", "19:00", "21:00", "23:00"}
+    {"02:00", "05:00", "08:00", "11:00", "14:00", "17:00", "20:00", "23:00"}
 } 
 
 local reminders = 
 {
     {5, 10, 15},
-    --{5, 10, 15}
+    {5, 10, 15}
 }
 
 local events = 
 {
     {"Maw tormenters", "GUILD"},
-    --{"Nazjatar skit", "PRINT"}
+    {"Nazjatar skit", "PRINT"}
 }
     
 
@@ -51,7 +51,7 @@ function doAlert(timer, reminder)
 
         local diff = (to_minutes(t_hours) + t_minutes) - (to_minutes(c_hours) + c_minutes)
 
-        if table_has_value(reminder, diff) then
+        if table_has_value(reminder, diff) or diff == 0 then
             return true, diff
         end
     end
@@ -61,7 +61,13 @@ end
 function check_time(event, timer, reminder)
     local gonna_alert, diff = doAlert(timer, reminder)
     if gonna_alert then
-        local msg = event[1] .. " in " .. diff .. " minutes"
+        local msg = ""
+        if diff == 0 then
+            msg = event[1] .. " starting now"
+        else
+            msg = event[1] .. " in " .. diff .. " minutes"
+        end
+        
         if event[2] == "PRINT" then
             print(msg)
         else
