@@ -1,16 +1,21 @@
-local timers = {"01:00",
-                "03:00",
-                "05:00",
-                "07:00",
-                "09:00",
-                "11:00",
-                "13:00",
-                "15:00",
-                "17:00",
-                "19:00",
-                "21:00",
-                "16:47",
-                "23:00"}
+local timers =
+{
+    {"01:00", "03:00", "05:00", "07:00", "09:00", "11:00", "13:00", "15:00", "17:00", "19:00", "21:00", "23:00"},
+    --{"01:00", "03:00", "05:00", "07:00", "09:00", "11:00", "13:00", "15:00", "17:00", "19:00", "21:00", "23:00"}
+} 
+
+local reminders = 
+{
+    {5, 10, 15},
+    --{5, 10, 15}
+}
+
+local events = 
+{
+    {"Maw tormenters", "GUILD"},
+    --{"Nazjatar skit", "PRINT"}
+}
+    
 
 function table_has_value (tab, val)
     for index, value in ipairs(tab) do
@@ -22,15 +27,55 @@ function table_has_value (tab, val)
     return false
 end
 
-function check_time()
-    local hours, minutes = GetGameTime()
+function Split(s, delimiter)
+    result = {};
+    for match in (s..delimiter):gmatch("(.-)"..delimiter) do
+        table.insert(result, match);
+    end
+    return result;
+end
 
-    if table_has_value(timers, tostring(hours+1) .. ":00" ) and (minutes == 45 or minutes == 50 or minutes == 55) then
-        SendChatMessage("Maw tormenters event in " .. 60-minutes .. " minutes", "GUILD", nil)
+function stringTime_to_numbers(s)
+    x = Split(s, ":")
+    return x[1], x[2]
+end
+
+function to_minutes(h)
+    return h*60
+end
+
+function doAlert(timer, reminder)
+    local c_hours, c_minutes = GetGameTime()
+    for i = 1, table.getn(timer) do
+        local t_hours, t_minutes = stringTime_to_numbers(timer[i])
+
+        local diff = (to_minutes(t_hours) + t_minutes) - (to_minutes(c_hours) + c_minutes)
+
+        if table_has_value(reminder, diff) then
+            return true, diff
+        end
+    end
+    return false, -404
+end
+
+function check_time(event, timer, reminder)
+    local gonna_alert, diff = doAlert(timer, reminder)
+    if gonna_alert then
+        local msg = event[1] .. " in " .. diff .. " minutes"
+        if event[2] == "PRINT" then
+            print(msg)
+        else
+            SendChatMessage(msg, event[2], nil)
+        end
+        
+        PlaySound(118491)
     end
 end
 
-check_time()
-local myTicker = C_Timer.NewTicker(60, check_time)
+for i = 1, table.getn(events) do
+    check_time(events[i], timers[i], reminders[i])
+    local myTicker = C_Timer.NewTicker(60, function() check_time(events[i], timers[i], reminders[i]); end )
+end
+
 
 
